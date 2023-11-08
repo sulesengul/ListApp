@@ -1,13 +1,13 @@
 //
 //  ViewController.swift
-//  ListApp2
+//  ListApp
 //
-//  Created by Şule Şengül on 4.11.2023.
+//  Created by Şule Şengül on 31.10.2023.
 //
 
 import UIKit
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController  {
     
     var alertController = UIAlertController()
     
@@ -19,16 +19,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell", for: indexPath)
-        cell.textLabel?.text = data[indexPath.row]
-        return cell
     }
     
     @IBAction func didRemoveBarButtonItemTapped(_ sender: UIBarButtonItem) {
@@ -76,9 +66,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                       isTextFieldAvaliable: Bool = false,
                       defaultButtonHandler: ((UIAlertAction)-> Void)? = nil) {
         
-        alertController = UIAlertController(title: "Uyarı",
-                                            message: "Liste elemanı boş olamaz.",
-                                            preferredStyle:.alert)
+        alertController = UIAlertController(title: title,
+                                            message: message,
+                                            preferredStyle: preferredStyle)
         
         if defaultButtonTitle != nil {
             let defaultButton = UIAlertAction(title: defaultButtonTitle,
@@ -100,3 +90,46 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 }
 
+extension ViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return data.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell", for: indexPath)
+        cell.textLabel?.text = data[indexPath.row]
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        let deleteAction = UIContextualAction(style: .normal,
+                                              title: "Sil") { _, _, _ in
+            self.data.remove(at: indexPath.row)
+            tableView.reloadData()
+        }
+        deleteAction.backgroundColor = .systemRed
+        
+        let editAction = UIContextualAction(style: .normal,
+                                              title: "Düzenle") { _, _, _ in
+            self.presentAlert(title: "Elemanı Düzenle",
+                              message: nil,
+                              defaultButtonTitle: "Düzenle",
+                              cancelButtonTitle: "Vazgeç",
+                              isTextFieldAvaliable: true,
+                              defaultButtonHandler: { _ in
+                let text = self.alertController.textFields?.first?.text
+                if text != "" {
+                    self.data[indexPath.row] = text!
+                    self.tableView.reloadData()
+                } else {
+                    self.presentWarningAlert()
+                }
+            })
+        }
+        
+        let config = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        
+        return config
+    }
+}

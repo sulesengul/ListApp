@@ -1,8 +1,8 @@
 //
 //  SceneDelegate.swift
-//  ListApp2
+//  ListApp
 //
-//  Created by Şule Şengül on 4.11.2023.
+//  Created by Şule Şengül on 31.10.2023.
 //
 
 import UIKit
