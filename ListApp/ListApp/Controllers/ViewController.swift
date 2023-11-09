@@ -179,5 +179,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         let config = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
         
         return config
+        
+        
     }
 }
